@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+	
+	{% if form %}
+	<div class="admin-page">
+		<form method="post" enctype="multipart/form-data" class="form-admin" action="/uploadStylesheet">
+			{{ form.csrf_token }}
+			{{ form.template_change_box.label }} {{ form.template_change_box(class_="form-control") }}
+			<input type="submit" value="Upload CSS" class="submitButton">
+		</form>
+	</div>
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages %}
+				{% if message != "success" %} 
+					<span class="flash success">{{ message }}</span>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+	{% endif %}
+
+
+{% endblock %}

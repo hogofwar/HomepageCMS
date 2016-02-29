@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>{{ title }}</title>	
+		<link rel="stylesheet" href="./static/stylesheets/{{current_css}}" />
+	</head>
+<body>
+
+<div id="content">
+	<div class="header">
+	  <h1>Nick-B<span>.ca</span></h1>
+	  <p>Here's a bunch of things I made</p>
+	</div>
+	<ul class="nav">
+		<li><a href="index.html" class='active'>Home</a></li>
+		<li><a href="projects">All Projects</a></li>
+	</ul>
+
+	<div class="stuff">
+	{% block content %} {% endblock %}
+	</div>
+</div>
+
+</body>
+</html>
