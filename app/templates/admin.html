@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 	
-	{% if form %}
+	{% if adminForm %}
 	<div class="admin-page">
-		<form method="post" enctype="multipart/form-data" class="form-admin" action="/uploadStylesheet">
-			{{ form.csrf_token }}
-			{{ form.template_change_box.label }} {{ form.template_change_box(class_="form-control") }}
-			<input type="submit" value="Upload CSS" class="submitButton">
+		
+		<form method="post" enctype="multipart/form-data" class="form-admin" action="/adminAction">
+			{{ adminForm.csrf_token }}
+			{{ adminForm.template_change_box.label }} {{ adminForm.template_change_box(class_="form-control") }}
+			{{ adminForm.choice_list.label }} {{ adminForm.choice_list(class_="form-control") }}
+			<br /><br />
+			<input type="submit" value="Save" class="submitButton">
 		</form>
+
+
 	</div>
 	{% with messages = get_flashed_messages() %}
 		{% if messages %}
