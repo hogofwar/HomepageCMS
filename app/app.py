@@ -1,10 +1,10 @@
 import jinja2, sys, os
-from config import Config
+from JSONconfig import Config
 
 from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__, static_url_path='')
-app.config.from_object('config')
+#app.config.from_object('config')
 cfg = Config()
 
 
@@ -17,7 +17,7 @@ def theme_static(filename):
 
 @app.route("/")
 def index():
-    return render_template("index.html",
+    return render_template("base.html",
                            title='Home')
 
 
