@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 	
-	{% if adminForm %}
+
 	<div class="admin-page">
 		
 		<form method="post" enctype="multipart/form-data" class="form-admin" action="/adminAction">
-			{{ adminForm.csrf_token }}
-			{{ adminForm.template_change_box.label }} {{ adminForm.template_change_box(class_="form-control") }}
-			{{ adminForm.choice_list.label }} {{ adminForm.choice_list(class_="form-control") }}
+            {{ form.theme(class_="form-control") }}
 			<br /><br />
 			<input type="submit" value="Save" class="submitButton">
 		</form>
@@ -23,7 +21,6 @@
 			{% endfor %}
 		{% endif %}
 	{% endwith %}
-	{% endif %}
 
 
 {% endblock %}

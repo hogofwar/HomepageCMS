@@ -1,12 +1,16 @@
 import jinja2, sys, os
 from JSONconfig import Config
+from forms import *
+from flask import Flask, render_template, send_from_directory, request
 
-from flask import Flask, render_template, send_from_directory
+import logging
+from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__, static_url_path='')
 #app.config.from_object('config')
-cfg = Config()
 
+cfg = Config()
+app.config['SECRET_KEY'] = '<the super secret key comes here>'
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
@@ -23,30 +27,33 @@ def index():
 
 @app.route("/admin")
 def admin():
-    # list_themes()
+    form = SelectTheme(request.form)
     return render_template("admin.html",
-                           title='Home')
+                           title='Admin',
+                           form=form)
 
 
-@app.errorhandler(404)
-def not_found_error(error):
-    # Let user configure 404 page
-    return render_template('errors/404.html'), 404
+# @app.errorhandler(404)
+# def not_found_error(error):
+#     # Let user configure 404 page
+#     return render_template('errors/404.html'), 404
 
 
 @app.before_first_request
 def start():
     cfg.load()
-    app.secret_key = cfg.get("secret-key")
+
+    app.config['SECRET_KEY'] = cfg.get("secret-key")
+    app.logger.info(cfg.get("secret-key"))
     set_theme(cfg.get("theme"))
 
 
 def list_themes():
-    themes = []
-    for subdir, dirs, files in os.walk("themes"):
-        for folder in dirs:
-            themes.append(folder)
-    return themes
+    theme_folders = []
+    for folder in os.listdir("themes"):
+        if os.path.isdir(os.path.join("themes", folder)):
+            theme_folders.append(folder)
+    return theme_folders
 
 
 def set_theme(theme):
@@ -59,4 +66,7 @@ def set_theme(theme):
 
 
 if __name__ == '__main__':
+    handler = RotatingFileHandler('foo.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
     app.run(debug=True)
