@@ -1,4 +1,4 @@
-import jinja2, sys
+import jinja2, sys, os
 from config import Config
 
 from flask import Flask, render_template, send_from_directory
@@ -10,7 +10,9 @@ cfg = Config()
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
-    return send_from_directory(app.root_path + "/themes/%s/static/" % cfg.get("theme"), filename)
+    if os.path.isfile(app.root_path + "/themes/%s/static/"+filename % cfg.get("theme")):
+        return send_from_directory(app.root_path + "/themes/%s/static/" % cfg.get("theme"), filename)
+    return send_from_directory(app.root_path + "/themes/default/static/", filename)
 
 
 @app.route("/")
