@@ -41,10 +41,12 @@ def start():
     set_theme(cfg.get("theme"))
 
 
-# def list_themes():
-#     for subdir, dirs, files in os.walk("themes"):
-#         for file in files:
-#            ## print(os.path.join(subdir, file), file=sys.stderr)
+def list_themes():
+    themes = []
+    for subdir, dirs, files in os.walk("themes"):
+        for folder in dirs:
+            themes.append(folder)
+    return themes
 
 
 def set_theme(theme):
