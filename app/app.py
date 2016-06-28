@@ -1,22 +1,16 @@
-import os
-import jinja2
+import jinja2, sys
+from config import Config
+
 from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__, static_url_path='')
 app.config.from_object('config')
-theme = "default"
-
-theme_loader = jinja2.ChoiceLoader([
-    app.jinja_loader,
-    jinja2.FileSystemLoader(['themes/%s/templates/' % theme,
-                             'themes/default/templates/']),
-])
-app.jinja_loader = theme_loader
+cfg = Config()
 
 
-@app.route('/base/<path:filename>')
+@app.route('/static/<path:filename>')
 def theme_static(filename):
-    return send_from_directory(app.root_path + "/themes/%s/static/" % theme, filename)
+    return send_from_directory(app.root_path + "/themes/%s/static/" % cfg.get("theme"), filename)
 
 
 @app.route("/")
@@ -27,21 +21,37 @@ def index():
 
 @app.route("/admin")
 def admin():
-    listThemes()
+    # list_themes()
     return render_template("admin.html",
-                           title='Home',
-                          )
+                           title='Home')
 
 
 @app.errorhandler(404)
 def not_found_error(error):
+    # Let user configure 404 page
     return render_template('errors/404.html'), 404
 
 
-def listThemes():
-    for subdir, dirs, files in os.walk("themes"):
-        for file in files:
-            print(os.path.join(subdir, file), file=sys.stderr)
+@app.before_first_request
+def start():
+    cfg.load()
+    app.secret_key = cfg.get("secret-key")
+    set_theme(cfg.get("theme"))
+
+
+# def list_themes():
+#     for subdir, dirs, files in os.walk("themes"):
+#         for file in files:
+#            ## print(os.path.join(subdir, file), file=sys.stderr)
+
+
+def set_theme(theme):
+    theme_loader = jinja2.ChoiceLoader([
+        app.jinja_loader,
+        jinja2.FileSystemLoader(['themes/%s/templates/' % theme,
+                                 'themes/default/templates/']),
+    ])
+    app.jinja_loader = theme_loader
 
 
 if __name__ == '__main__':
