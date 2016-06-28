@@ -10,7 +10,7 @@ cfg = Config()
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
-    if os.path.isfile(app.root_path + "/themes/%s/static/"+filename % cfg.get("theme")):
+    if os.path.isfile(app.root_path + "/themes/%s/static/%s" % (cfg.get("theme"), filename)):
         return send_from_directory(app.root_path + "/themes/%s/static/" % cfg.get("theme"), filename)
     return send_from_directory(app.root_path + "/themes/default/static/", filename)
 
