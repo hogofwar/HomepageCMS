@@ -8,4 +8,4 @@ themes = list_themes()
 
 
 class SelectTheme(Form):
-    theme = SelectField("Theme", [Optional()], choices=[(t, t) for t in themes])
+    theme = SelectField("Theme", choices=[(t, t) for t in themes])

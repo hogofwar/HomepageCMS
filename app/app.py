@@ -10,7 +10,7 @@ app = Flask(__name__, static_url_path='')
 #app.config.from_object('config')
 
 cfg = Config()
-app.config['SECRET_KEY'] = '<the super secret key comes here>'
+#app.config['SECRET_KEY'] = '<the super secret key comes here>'
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
@@ -25,9 +25,13 @@ def index():
                            title='Home')
 
 
-@app.route("/admin")
+@app.route("/admin", methods=('GET', 'POST'))
 def admin():
-    form = SelectTheme(request.form)
+    form = SelectTheme()
+    if form.validate_on_submit():
+        cfg.set("theme", form.theme.data, True)
+        set_theme(form.theme.data)
+        app.logger.info("Set theme")
     return render_template("admin.html",
                            title='Admin',
                            form=form)

@@ -1,0 +1,198 @@
+@import url(http://fonts.googleapis.com/css?family=Inconsolata);
+
+html, body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Inconsolata';
+	background-color: #FFF;
+}
+
+#content:before {
+	content: " ";
+	position: absolute;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	padding: 4px;
+	left: -8px;
+	bottom: -8px;
+	border: 4px solid #222426;
+	box-shadow: 0px 0px 5px 5px #111;
+}
+
+#content {
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin: auto auto auto auto;
+	top: 10%;
+	width: 600px;
+	background-color: #222426;
+	border: 4px solid #111;
+	color: #707070;
+}
+
+#content .header {
+	text-align: center;
+	padding: 10px 0 10px 0;
+	margin-top: 0;
+	height: 60px;
+	background-color: #111;
+}
+
+#content .header h1 {
+	padding-bottom: 1px;
+	margin-bottom: 0;
+	margin-top: 0;
+	color: #e3e3e3;
+}
+
+#content .header span {
+	font-size: 14px;
+}
+
+#content .header p {
+	padding: 0 50px 0 50px;
+	margin: 0;
+}
+
+#content .header p:before {
+	content: '--- ';
+	font-size: 16px;
+	letter-spacing: -3px;
+}
+
+#content .header p:after {
+	content: ' ---';
+	font-size: 16px;
+	letter-spacing: -3px;
+}
+
+.nav {
+	text-align: center;
+	border-bottom: 4px solid #111;
+}
+
+#content a{
+	color: #a0a0a0;
+}
+
+#content ul.nav {
+	padding: 20px;
+	background-color: #141414;
+	margin: 0 auto;
+}
+
+#content ul.nav li {
+	display: inline;
+	text-decoration: none;
+}	
+
+#content ul.nav li>a {
+	color: #e1e1e1;
+	padding: 5px;
+	background-color: #111111;
+	border: 3px solid #333;
+	text-decoration: none;
+}
+
+#content ul.nav li>a:visited {
+	color: #e1e1e1;
+	padding: 5px;
+	background-color: #111111;
+	border: 3px solid #333;
+	text-decoration: none;
+}
+
+#content ul.nav li>a:hover {
+	background-color: #141414;
+}
+
+#content p {
+	padding: 0 10px 10px 10px;
+	margin: 0;
+}
+
+#content img {
+	float: left;
+	border: 4px solid #111;
+	margin: 0 8px 4px 4px;
+}
+
+#content h2 {
+	padding: 4px;
+	background-color: #17191A;
+	border: 4px solid #111;
+	color: #707070;
+	font-size: 21px;
+	text-align: center;
+	margin: 5px 5px 10px 10px;
+}
+
+#content .stuff {
+	width: 99%;
+	padding: 0;
+	margin: 10px 0 20px 0;
+	height: 30%;
+}
+
+#content .admin-page {
+	padding: 10px;
+}
+
+#content .admin-page h1 {
+	width: 200px;
+	border-bottom: 2px solid #333;
+}
+
+#content .admin-page .form-admin label{
+	display: block;	
+	padding: 10px 0 10px 0;
+}
+
+#content .admin-page .form-admin .form-control{
+	position:relative;
+	height: auto;
+	padding: 10px;
+	font-size: 12px;
+	background-color: #333 !important;
+	color: #aaa;
+	border: 2px solid #111;
+}
+
+#content .admin-page .form-admin input[type="submit"] {
+	border-radius: 0;
+	background-color: #333;
+	border: 2px solid #222;
+	color: #aaa;
+	padding: 10px;
+}
+
+#content .flash {
+	position: fixed;
+	padding: 20px 0 20px 0;
+	text-align: center;
+	width: 250px;
+	left: 50%;
+	top: 45%;
+	background-color: #333;
+	border: 2px solid #222;
+	color: #aaa;
+	margin-left: -125px;
+}
+
+#content .success {
+	border: 2px solid lightgreen;
+}
+
+#content .footer {
+	position: absolute;
+	bottom: 5px;
+	width: 100%;
+	line-height: 2.3;
+	text-align: center;
+	font-size: 11px;
+	color: #a1a1a1;
+	height: 20px;
+}
+

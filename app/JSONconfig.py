@@ -7,8 +7,10 @@ class Config:
     def get(self, key):
         return self.config[key]
 
-    def set(self, key, value):
+    def set(self, key, value, save=False):
         self.config[key] = value
+        if save:
+            self.save()
 
     def load(self, file = "config.json"):
         if not os.path.isfile(file):

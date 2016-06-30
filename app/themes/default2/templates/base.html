@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>{{ title }}</title>	
+		<link rel="stylesheet" href="{{ url_for('theme_static', filename='stylesheets/default.css') }}" />
+	</head>
+<body>
+
+<div id="content">
+	<div class="header">
+	  <h1>{{ header }}<span>.ca</span></h1>
+	  <p>{{ subtitle }}</p>
+	</div>
+	<ul class="nav">
+        {% for item in nav %}
+		<li><a href="{{ item.path }}" class='active'>{{ item.name }}</a></li>
+        {% endfor %}
+
+
+	</ul>
+
+	<div class="stuff">
+	{% block content %} {% endblock %}
+    {{ content }}
+	</div>
+</div>
+
+</body>
+</html>

@@ -4,7 +4,7 @@
 
 	<div class="admin-page">
 		
-		<form method="post" class="form-admin" action="/admin">
+		<form method="post" enctype="multipart/form-data" class="form-admin" action="/admin">
             {{ form.csrf_token }}
             {{ form.theme(class_="form-control") }}
 			<br /><br />
