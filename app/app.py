@@ -7,10 +7,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__, static_url_path='')
-#app.config.from_object('config')
-
 cfg = Config()
-#app.config['SECRET_KEY'] = '<the super secret key comes here>'
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
@@ -37,14 +34,11 @@ def admin():
                            form=form)
 
 
-# @app.errorhandler(404)
-# def not_found_error(error):
-#     # Let user configure 404 page
-#     return render_template('errors/404.html'), 404
-
-
 @app.before_first_request
 def start():
+    """
+    Load Config with secret key, and current theme.
+    """
     cfg.load()
 
     app.config['SECRET_KEY'] = cfg.get("secret-key")
@@ -53,6 +47,11 @@ def start():
 
 
 def list_themes():
+    """
+    Get a list of themes.
+    TODO: get the data from the theme.json file.
+    :return:
+    """
     theme_folders = []
     for folder in os.listdir("themes"):
         if os.path.isdir(os.path.join("themes", folder)):
@@ -61,6 +60,11 @@ def list_themes():
 
 
 def set_theme(theme):
+    """
+    Sets Jinja to use the given theme's folder.
+    :param theme: name of theme folder
+    :return:
+    """
     theme_loader = jinja2.ChoiceLoader([
         app.jinja_loader,
         jinja2.FileSystemLoader(['themes/%s/templates/' % theme,
