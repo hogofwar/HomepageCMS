@@ -50,7 +50,7 @@ def list_themes():
     """
     Get a list of themes.
     TODO: get the data from the theme.json file.
-    :return:
+    :return: list of themes
     """
     theme_folders = []
     for folder in os.listdir("themes"):
