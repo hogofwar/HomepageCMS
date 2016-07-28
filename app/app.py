@@ -1,8 +1,9 @@
-import jinja2, sys, os
+import jinja2, sys, os, re
 from flask import url_for
 from flask_misaka import Misaka, markdown
 
 from JSONconfig import Config
+from page import Page
 from flask import Flask, render_template, send_from_directory, request
 
 import logging
@@ -11,6 +12,7 @@ from logging.handlers import RotatingFileHandler
 app = Flask(__name__, static_url_path='/static/')
 Misaka(app)
 cfg = Config()
+app.jinja_env.cache = {}
 
 
 @app.route('/', defaults={'path': ''})
@@ -21,9 +23,9 @@ def page(path):
 
     if page_file is not None:
         app.logger.info("parsing page")
-        content = markdown(page_file, strikethrough=True)
+
         return render_template("base.html",
-                           content=content, title="Title", header="Header", subtitle="Subtitle")
+                           content=page_file.markup, title="Title", header="Header", subtitle="Subtitle")
     else:
         app.logger.info("page not found")
         return "404"
@@ -36,7 +38,7 @@ def get_page(path):
         file = open("pages/"+path+".md")
         contents = file.read()
         file.close()
-        return contents
+        return Page(path, contents)
     return None
     #find file (ignoring extension) (or just use .md)
     #return null if doesn't exist
@@ -65,6 +67,7 @@ def favicon():
 #                            title='Admin',
 #                            form=form)
 
+# add metadata parsing for Title, author and date. All optional
 
 @app.before_first_request
 def start():
@@ -106,7 +109,9 @@ def set_theme(theme):
 
 
 if __name__ == '__main__':
-    handler = RotatingFileHandler('foo.log', maxBytes=10000, backupCount=1)
+    handler = RotatingFileHandler('cms.log', maxBytes=10000, backupCount=1)
     handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
     app.run(debug=True)
+
+
