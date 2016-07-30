@@ -1,11 +1,13 @@
-import re, os
+import os
+import re
+
 from flask_misaka import markdown
 
 
 class Page:
     metadata = re.compile(r'(^@\s*(.*(?:\h{2,}.*)*)\n)', re.MULTILINE)
 
-    def __init__(self, path): #change to file itself
+    def __init__(self, path):  # change to file itself
 
         self.name = path
         self.markdown = self.load_file(path)
@@ -13,12 +15,13 @@ class Page:
         self.title = None
         self.author = None
         self.date = None
-        self.time = None #store last modified time of the file, if modified time is newer, regenerate
+        self.time = None  # store last modified time of the file, if modified time is newer, regenerate
         self.parse()
 
     def parse(self):
         self.markdown = self.parse_metadata(self.markdown)
-        self.markup = markdown(self.markdown, strikethrough=True, autolink=True, fenced_code=True, highlight=True, quote=True, math=True, superscript=True, tables=True, footnotes=True, smartypants=True)
+        self.markup = markdown(self.markdown, strikethrough=True, autolink=True, fenced_code=True, highlight=True,
+                               quote=True, math=True, superscript=True, tables=True, footnotes=True, smartypants=True)
 
     def parse_metadata(self, raw_contents):
         matches = re.findall(self.metadata, raw_contents)
