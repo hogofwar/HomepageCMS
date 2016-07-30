@@ -5,13 +5,14 @@ from flask_misaka import markdown
 class Page:
     metadata = re.compile(r'(^@\s*(.*(?:\h{2,}.*)*)\n)', re.MULTILINE)
 
-    def __init__(self, name, file_contents):
+    def __init__(self, name, file_contents): #change to file itself
         self.name = name
         self.markdown = file_contents
         self.markup = None
         self.title = None
         self.author = None
         self.date = None
+        self.time = None #store last modified time of the file, if modified time is newer, regenerate
         self.parse()
 
     def parse(self):

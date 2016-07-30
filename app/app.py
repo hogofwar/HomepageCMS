@@ -26,6 +26,8 @@ def page(path):
 
         return render_template("base.html",
                            content=page_file.markup, title="Title", header="Header", subtitle="Subtitle")
+        # perhaps change to passing Page and Site
+        # Maybe make a Site class
     else:
         app.logger.info("page not found")
         return "404"
