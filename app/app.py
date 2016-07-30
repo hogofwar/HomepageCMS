@@ -1,11 +1,9 @@
 import jinja2, sys, os, re
 from flask import url_for
 from flask_misaka import Misaka, markdown
-
 from JSONconfig import Config
 from page import Page
 from flask import Flask, render_template, send_from_directory, request
-
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -24,8 +22,18 @@ def page(path):
     if page_file is not None:
         app.logger.info("parsing page")
 
+        nav_items = []
+        for page in os.listdir("pages"):
+            if page.endswith('.md'):
+                page_dict = {'name': page, 'path': '/'+page}
+                nav_items.append(page_dict)
+
         return render_template("base.html",
-                           content=page_file.markup, title="Title", header="Header", subtitle="Subtitle")
+                               content=page_file.markup,
+                               nav=nav_items,
+                               title="Title",
+                               header="Header",
+                               subtitle="Subtitle")
     else:
         app.logger.info("page not found")
         return "404"
@@ -113,5 +121,3 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
     app.run(debug=True)
-
-
