@@ -1,9 +1,11 @@
 import jinja2, sys, os, re
 from flask import url_for
 from flask_misaka import Misaka, markdown
+
 from JSONconfig import Config
 from page import Page
 from flask import Flask, render_template, send_from_directory, request
+
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -17,7 +19,7 @@ app.jinja_env.cache = {}
 @app.route('/<path:path>')
 def page(path):
     app.logger.info("Checking if page :"+path)
-    page_file = get_page(path)
+    page_file = Page(path)
 
     if page_file is not None:
         app.logger.info("parsing page")
@@ -25,10 +27,14 @@ def page(path):
         nav_items = []
         for page in os.listdir("pages"):
             if page.endswith('.md'):
+<<<<<<< HEAD
                 page_dict = {'type': 'file', 'name': page, 'path': '/'+page}
                 nav_items.append(page_dict)
             elif os.path.isdir("pages/"+page):
                 page_dict = {'type': 'subfolder', 'name': page, 'path': "#"}
+=======
+                page_dict = {'name': Page(page).title, 'path': '/'+page}
+>>>>>>> c215b9b05d79f1d9707d3cab832bcb00fabd1f3d
                 nav_items.append(page_dict)
 
         return render_template("base.html",
@@ -40,20 +46,6 @@ def page(path):
     else:
         app.logger.info("page not found")
         return "404"
-
-
-def get_page(path):
-    if path == "":
-        path = "index"
-    if os.path.isfile("pages/"+path+".md"):
-        file = open("pages/"+path+".md")
-        contents = file.read()
-        file.close()
-        return Page(path, contents)
-    return None
-    #find file (ignoring extension) (or just use .md)
-    #return null if doesn't exist
-
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
