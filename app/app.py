@@ -19,7 +19,7 @@ app.jinja_env.cache = {}
 @app.route('/<path:path>')
 def page(path):
     app.logger.info("Checking if page :"+path)
-    page_file = get_page(path)
+    page_file = Page(path)
 
     if page_file is not None:
         app.logger.info("parsing page")
@@ -27,7 +27,7 @@ def page(path):
         nav_items = []
         for page in os.listdir("pages"):
             if page.endswith('.md'):
-                page_dict = {'name': page, 'path': '/'+page}
+                page_dict = {'name': Page(page).title, 'path': '/'+page}
                 nav_items.append(page_dict)
 
         return render_template("base.html",
@@ -39,20 +39,6 @@ def page(path):
     else:
         app.logger.info("page not found")
         return "404"
-
-
-def get_page(path):
-    if path == "":
-        path = "index"
-    if os.path.isfile("pages/"+path+".md"):
-        file = open("pages/"+path+".md")
-        contents = file.read()
-        file.close()
-        return Page(path, contents)
-    return None
-    #find file (ignoring extension) (or just use .md)
-    #return null if doesn't exist
-
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):

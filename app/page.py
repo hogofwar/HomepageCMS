@@ -1,13 +1,14 @@
-import re
+import re, os
 from flask_misaka import markdown
 
 
 class Page:
     metadata = re.compile(r'(^@\s*(.*(?:\h{2,}.*)*)\n)', re.MULTILINE)
 
-    def __init__(self, name, file_contents): #change to file itself
-        self.name = name
-        self.markdown = file_contents
+    def __init__(self, path): #change to file itself
+
+        self.name = path
+        self.markdown = self.load_file(path)
         self.markup = None
         self.title = None
         self.author = None
@@ -17,7 +18,7 @@ class Page:
 
     def parse(self):
         self.markdown = self.parse_metadata(self.markdown)
-        self.markup = markdown(self.markdown, strikethrough=True)
+        self.markup = markdown(self.markdown, strikethrough=True, autolink=True, fenced_code=True, highlight=True, quote=True, math=True, superscript=True, tables=True, footnotes=True, smartypants=True)
 
     def parse_metadata(self, raw_contents):
         matches = re.findall(self.metadata, raw_contents)
@@ -27,3 +28,14 @@ class Page:
         for match in matches:
             raw_contents = raw_contents[len(match[0]):]
         return raw_contents
+
+    def load_file(self, path):
+        path = os.path.splitext(path)[0]
+        if path == "":
+            path = "index"
+        if os.path.isfile("pages/" + path + ".md"):
+            file = open("pages/" + path + ".md")
+            contents = file.read()
+            file.close()
+            return contents
+        return "##404##"
