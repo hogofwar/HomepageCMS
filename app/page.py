@@ -5,7 +5,7 @@ from flask_misaka import markdown
 
 
 class Page:
-    metadata = re.compile(r'(^@\s*(.*(?:\h{2,}.*)*)\n)', re.MULTILINE)
+    metadata = re.compile(r'(^@\s*(.*(?:[ \t]{2,}.*)*)\n)', re.MULTILINE)
 
     def __init__(self, path):  # change to file itself
 
