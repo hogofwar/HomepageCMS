@@ -25,7 +25,10 @@ def page(path):
         nav_items = []
         for page in os.listdir("pages"):
             if page.endswith('.md'):
-                page_dict = {'name': page, 'path': '/'+page}
+                page_dict = {'type': 'file', 'name': page, 'path': '/'+page}
+                nav_items.append(page_dict)
+            elif os.path.isdir("pages/"+page):
+                page_dict = {'type': 'subfolder', 'name': page, 'path': "#"}
                 nav_items.append(page_dict)
 
         return render_template("base.html",

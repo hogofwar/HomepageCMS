@@ -13,7 +13,16 @@
 	</div>
 	<ul class="nav">
         {% for item in nav %}
-		<li><a href="{{ item.path }}" class='active'>{{ item.name }}</a></li>
+			{% if item.type == 'file' %}
+			<li><a href="{{ item.path }}" class='active'>{{ item.name }}</a></li>
+			{% else %}
+			<li class="dropdown">	
+				<a href="#" > {{item.name}} </a>
+				<div class="dropdown-content">
+					<a href="{{item.path}}">{{ item.name }}</a>
+				</div>
+			</li>
+			{% endif %}
         {% endfor %}
 
 
