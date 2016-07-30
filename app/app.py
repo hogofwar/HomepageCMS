@@ -36,7 +36,7 @@ def page(path):
         return render_template("base.html",
                                content=page_file.markup,
                                nav=nav_items,
-                               title="Title",
+                               title=page_file.title,
                                header="Header",
                                subtitle="Subtitle")
     else:
