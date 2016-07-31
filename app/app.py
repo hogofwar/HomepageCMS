@@ -1,24 +1,24 @@
-import jinja2, sys, os, re
-from flask import url_for
-from flask_misaka import Misaka, markdown
-
-from JSONconfig import Config
-from page import Page
-from flask import Flask, render_template, send_from_directory, request
-
 import logging
 from logging.handlers import RotatingFileHandler
 
+import jinja2
+import os
+from flask import Flask, render_template, send_from_directory
+from flask_misaka import Misaka
+
+from JSONconfig import Config
+from page import Page
+
 app = Flask(__name__, static_url_path='/static/')
 Misaka(app)
-cfg = Config()
+cfg = Config( "config.json")
 app.jinja_env.cache = {}
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def page(path):
-    app.logger.info("Checking if page :"+path)
+    app.logger.info("Checking if page :" + path)
     page_file = Page(path)
 
     if page_file is not None:
@@ -27,10 +27,10 @@ def page(path):
         nav_items = []
         for page in os.listdir("pages"):
             if page.endswith('.md'):
-                page_dict = {'type': 'file', 'name': Page(page).title, 'path': '/'+page}
+                page_dict = {'type': 'file', 'name': Page(page).title, 'path': '/' + page}
                 nav_items.append(page_dict)
-            elif os.path.isdir("pages/"+page):
-                page_dict = {'type': 'subfolder', 'name': page, 'path': '/'+page}
+            elif os.path.isdir("pages/" + page):
+                page_dict = {'type': 'subfolder', 'name': page, 'path': '/' + page}
                 nav_items.append(page_dict)
 
         return render_template("base.html",
@@ -43,6 +43,7 @@ def page(path):
         app.logger.info("page not found")
         return "404"
 
+
 @app.route('/static/<path:filename>')
 def theme_static(filename):
     app.logger.info("providing static")
@@ -54,6 +55,8 @@ def theme_static(filename):
 @app.route('/favicon.ico')
 def favicon():
     return theme_static("favicon.ico")
+
+
 # Relic of theme switching.
 # @app.route("/admin", methods=('GET', 'POST'))
 # def admin():
