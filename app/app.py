@@ -5,14 +5,20 @@ import jinja2
 import os
 from flask import Flask, render_template, send_from_directory
 from flask_misaka import Misaka
+from base64 import b64encode
+import collections
 
 from JSONconfig import Config
 from page import Page
 
 app = Flask(__name__, static_url_path='/static/')
 Misaka(app)
-cfg = Config( "config.json")
+cfg = Config("config")
 app.jinja_env.cache = {}
+site_info = point = collections.namedtuple('Site', ['header', 'subtitle'])
+site_info.header = cfg.get("header", "Header Holder")
+site_info.subtitle = cfg.get("subtitle", "Subtitle Holder")
+# each folder has it's own info.json. says if it is hidden or not? Other details like subnav name?
 
 
 @app.route('/', defaults={'path': ''})
@@ -37,8 +43,8 @@ def page(path):
                                content=page_file.markup,
                                nav=nav_items,
                                title=page_file.title,
-                               header="Header",
-                               subtitle="Subtitle")
+                               header=site_info.header,
+                               subtitle=site_info.subtitle)
     else:
         app.logger.info("page not found")
         return "404"
@@ -76,11 +82,8 @@ def start():
     """
     Load Config with secret key, and current theme.
     """
-    cfg.load()
-
-    app.config['SECRET_KEY'] = cfg.get("secret-key")
-    app.logger.info(cfg.get("secret-key"))
-    set_theme(cfg.get("theme"))
+    app.config['SECRET_KEY'] = cfg.get("secret-key", b64encode(os.urandom(24)).decode('utf-8'))
+    set_theme(cfg.get("theme", "default"))
 
 
 def list_themes():
