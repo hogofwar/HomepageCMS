@@ -11,23 +11,23 @@
 	  <h1>{{ header }}</h1>
 	  <p>{{ subtitle }}</p>
 	</div>
-	<ul class="nav">
-        {% for item in nav %}
-			{% if item.type == 'file' %}
-			<li><a href="{{ item.path }}" class='active'>{{ item.name }}</a></li>
-			{% else %}
-			<li class="dropdown">	
-				<a href="#" > {{item.name}} </a>
-				<div class="dropdown-content">
-					<a href="{{item.path}}">{{ item.name }}</a>
-				</div>
-			</li>
-			{% endif %}
-        {% endfor %}
-
-
-	</ul>
-
+	<nav id="primary_nav_wrap">
+		<ul>
+			{% for item in nav %}
+				{% if item.type == 'sub-folder' %}
+					<li><a href="#">{{ item.name }}</a>
+						<ul>
+							{% for sub_item in item.contents %}
+							<li><a href="#">{{ sub_item.name }}</li>
+							{% endfor %}
+						</ul>
+					</li>
+				{% elif item.type == 'file' %}
+				<li><a href="{{ item.path }}">{{ item.name }}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+	</nav>
 	<div class="stuff">
     {{ content }}
 	</div>
