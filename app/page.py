@@ -4,18 +4,25 @@ import re
 from flask_misaka import markdown
 
 
+def parse_path(path):
+    path = os.path.splitext(path)[0]
+    if path == "":
+        path = "index"
+    return "pages/" + path + ".md"
+
 class Page:
     metadata = re.compile(r'(^@\s*(.*(?:[ \t]{2,}.*)*)\n)', re.MULTILINE)
 
     def __init__(self, path):  # change to file itself
 
         self.name = path
-        self.markdown = self.load_file(path)
+        self.time = None
+        self.markdown = self.load_file(
+        )
         self.markup = None
         self.title = None
         self.author = None
         self.date = None
-        self.time = None  # store last modified time of the file, if modified time is newer, regenerate
         self.parse()
 
     def parse(self):
@@ -32,13 +39,14 @@ class Page:
             raw_contents = raw_contents[len(match[0]):]
         return raw_contents
 
-    def load_file(self, path):
-        path = os.path.splitext(path)[0]
-        if path == "":
-            path = "index"
-        if os.path.isfile("pages/" + path + ".md"):
-            file = open("pages/" + path + ".md")
+    def load_file(self):
+        path = parse_path(self.name)
+        if os.path.isfile(path):
+            file = open(path)
             contents = file.read()
+            self.time = os.path.getmtime(path)
             file.close()
             return contents
         return "##404##"
+
+

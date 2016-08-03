@@ -9,7 +9,7 @@ from base64 import b64encode
 import collections
 
 from JSONconfig import Config
-from page import Page
+from page import Page, parse_path
 
 app = Flask(__name__, static_url_path='/static/')
 Misaka(app)
@@ -19,13 +19,14 @@ site_info = point = collections.namedtuple('Site', ['header', 'subtitle'])
 site_info.header = cfg.get("header", "Header Holder")
 site_info.subtitle = cfg.get("subtitle", "Subtitle Holder")
 # each folder has it's own info.json. says if it is hidden or not? Other details like subnav name?
+pages = {}
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def page(path):
     app.logger.info("Checking if page :" + path)
-    page_file = Page(path)
+    page_file = get_page(path)
 
     if page_file is not None:
         app.logger.info("parsing page")
@@ -79,6 +80,19 @@ def favicon():
 #                            form=form)
 
 # add metadata parsing for Title, author and date. All optional
+
+
+def get_page(path):
+    if path in pages:
+        app.logger.info("Cache Hit")
+        if pages.get(path).time < os.path.getmtime(parse_path(path)):
+            app.logger.info("Cache Reloading")
+            pages[path] = Page(path)
+    else:
+        app.logger.info("Cache Miss")
+        pages[path] = Page(path)
+    return pages.get(path)
+
 
 @app.before_first_request
 def start():
