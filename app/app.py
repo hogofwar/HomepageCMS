@@ -32,16 +32,16 @@ def page(path):
         app.logger.info("Parsing page")
 
         nav_items = []  # Nav should be generated once, perhaps updated whenever files are detected as updated
-        for page in os.listdir("pages"):
-            if os.path.splitext(page)[1] == "md":
-                page_dict = {'type': 'file', 'name': Page(page).title, 'path': '/' + page}
+        for current_page in os.listdir("pages"):
+            if os.path.splitext(current_page)[1] == "md":
+                page_dict = {'type': 'file', 'name': Page(current_page).title, 'path': '/' + current_page}
                 nav_items.append(page_dict)
-            elif os.path.isdir("pages/" + page):
+            elif os.path.isdir("pages/" + current_page):
                 contents = []
-                for sub_page in os.listdir("pages/" + page):
+                for sub_page in os.listdir("pages/" + current_page):
                     if os.path.splitext(sub_page)[1] == "md":
                         contents.append({'type': 'sub-file', 'name': sub_page, 'path': '/' + sub_page})
-                page_dict = {'type': 'sub-folder', 'name': page, 'contents': contents}
+                page_dict = {'type': 'sub-folder', 'name': current_page, 'contents': contents}
                 nav_items.append(page_dict)
 
         return render_template("base.html",
