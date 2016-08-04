@@ -33,13 +33,13 @@ def page(path):
 
         nav_items = []  # Nav should be generated once, perhaps updated whenever files are detected as updated
         for current_page in os.listdir("pages"):
-            if os.path.splitext(current_page)[1] == "md":
+            if os.path.splitext(current_page)[1] == ".md":
                 page_dict = {'type': 'file', 'name': Page(current_page).title, 'path': '/' + current_page}
                 nav_items.append(page_dict)
-            elif os.path.isdir("pages/" + current_page):
+            elif os.path.isdir("pages/" + current_page) and os.listdir("pages/" + current_page) != []:
                 contents = []
                 for sub_page in os.listdir("pages/" + current_page):
-                    if os.path.splitext(sub_page)[1] == "md":
+                    if os.path.splitext(sub_page)[1] == ".md":
                         contents.append({'type': 'sub-file', 'name': sub_page, 'path': '/' + sub_page})
                 page_dict = {'type': 'sub-folder', 'name': current_page, 'contents': contents}
                 nav_items.append(page_dict)
