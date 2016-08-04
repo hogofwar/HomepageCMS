@@ -1,12 +1,12 @@
+import collections
 import logging
+import os
+from base64 import b64encode
 from logging.handlers import RotatingFileHandler
 
 import jinja2
-import os
 from flask import Flask, render_template, send_from_directory
 from flask_misaka import Misaka
-from base64 import b64encode
-import collections
 
 from JSONconfig import Config
 from page import Page, parse_path
@@ -25,21 +25,21 @@ pages = {}
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def page(path):
-    app.logger.info("Checking if page :" + path)
+    app.logger.info("Getting page: " + path)
     page_file = get_page(path)
 
     if page_file is not None:
-        app.logger.info("parsing page")
+        app.logger.info("Parsing page")
 
-        nav_items = []
+        nav_items = []  # Nav should be generated once, perhaps updated whenever files are detected as updated
         for page in os.listdir("pages"):
-            if os.path.splitext(page)[1]== "md":
+            if os.path.splitext(page)[1] == "md":
                 page_dict = {'type': 'file', 'name': Page(page).title, 'path': '/' + page}
                 nav_items.append(page_dict)
             elif os.path.isdir("pages/" + page):
                 contents = []
                 for sub_page in os.listdir("pages/" + page):
-                    if os.path.splitext(sub_page)[1]== "md":
+                    if os.path.splitext(sub_page)[1] == "md":
                         contents.append({'type': 'sub-file', 'name': sub_page, 'path': '/' + sub_page})
                 page_dict = {'type': 'sub-folder', 'name': page, 'contents': contents}
                 nav_items.append(page_dict)
@@ -51,13 +51,14 @@ def page(path):
                                header=site_info.header,
                                subtitle=site_info.subtitle)
     else:
-        app.logger.info("page not found")
+        app.logger.info("Page not found")
+        # technically can't happen since Page is returned, containing 404
         return "404"
 
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
-    app.logger.info("providing static")
+    app.logger.info("Providing static file: "+filename)
     if os.path.isfile(app.root_path + "/themes/%s/static/%s" % (cfg.get("theme"), filename)):
         return send_from_directory(app.root_path + "/themes/%s/static/" % cfg.get("theme"), filename)
     return send_from_directory(app.root_path + "/themes/default/static/", filename)
@@ -66,6 +67,7 @@ def theme_static(filename):
 @app.route('/favicon.ico')
 def favicon():
     return theme_static("favicon.ico")
+
 
 # Relic of theme switching.
 # @app.route("/admin", methods=('GET', 'POST'))
@@ -100,6 +102,7 @@ def start():
     Load Config with secret key, and current theme.
     """
     app.config['SECRET_KEY'] = cfg.get("secret-key", b64encode(os.urandom(24)).decode('utf-8'))
+    app.logger.info("Loaded key: " + app.config['SECRET_KEY'])
     set_theme(cfg.get("theme", "default"))
 
 
