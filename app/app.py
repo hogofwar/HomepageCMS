@@ -1,15 +1,15 @@
+import collections
 import logging
+import os
+from base64 import b64encode
 from logging.handlers import RotatingFileHandler
 
 import jinja2
-import os
 from flask import Flask, render_template, send_from_directory
 from flask_misaka import Misaka
-from base64 import b64encode
-import collections
 
 from JSONconfig import Config
-from page import Page
+from page import Page, parse_path
 
 app = Flask(__name__, static_url_path='/static/')
 Misaka(app)
@@ -19,28 +19,29 @@ site_info = point = collections.namedtuple('Site', ['header', 'subtitle'])
 site_info.header = cfg.get("header", "Header Holder")
 site_info.subtitle = cfg.get("subtitle", "Subtitle Holder")
 # each folder has it's own info.json. says if it is hidden or not? Other details like subnav name?
+pages = {}
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def page(path):
-    app.logger.info("Checking if page :" + path)
-    page_file = Page(path)
+    app.logger.info("Getting page: " + path)
+    page_file = get_page(path)
 
     if page_file is not None:
-        app.logger.info("parsing page")
+        app.logger.info("Parsing page")
 
-        nav_items = []
-        for page in os.listdir("pages"):
-            if page.endswith('.md'):
-                page_dict = {'type': 'file', 'name': Page(page).title, 'path': '/' + page}
+        nav_items = []  # Nav should be generated once, perhaps updated whenever files are detected as updated
+        for current_page in os.listdir("pages"):
+            if os.path.splitext(current_page)[1] == "md":
+                page_dict = {'type': 'file', 'name': Page(current_page).title, 'path': '/' + current_page}
                 nav_items.append(page_dict)
-            elif os.path.isdir("pages/" + page):
+            elif os.path.isdir("pages/" + current_page):
                 contents = []
-                for sub_page in os.listdir("pages/" + page):
-                    if sub_page.endswith('.md'):
+                for sub_page in os.listdir("pages/" + current_page):
+                    if os.path.splitext(sub_page)[1] == "md":
                         contents.append({'type': 'sub-file', 'name': sub_page, 'path': '/' + sub_page})
-                page_dict = {'type': 'sub-folder', 'name': page, 'contents': contents}
+                page_dict = {'type': 'sub-folder', 'name': current_page, 'contents': contents}
                 nav_items.append(page_dict)
 
         return render_template("base.html",
@@ -50,13 +51,14 @@ def page(path):
                                header=site_info.header,
                                subtitle=site_info.subtitle)
     else:
-        app.logger.info("page not found")
+        app.logger.info("Page not found")
+        # technically can't happen since Page is returned, containing 404
         return "404"
 
 
 @app.route('/static/<path:filename>')
 def theme_static(filename):
-    app.logger.info("providing static")
+    app.logger.info("Providing static file: "+filename)
     if os.path.isfile(app.root_path + "/themes/%s/static/%s" % (cfg.get("theme"), filename)):
         return send_from_directory(app.root_path + "/themes/%s/static/" % cfg.get("theme"), filename)
     return send_from_directory(app.root_path + "/themes/default/static/", filename)
@@ -81,12 +83,26 @@ def favicon():
 
 # add metadata parsing for Title, author and date. All optional
 
+
+def get_page(path):
+    if path in pages:
+        app.logger.info("Cache Hit")
+        if pages.get(path).time < os.path.getmtime(parse_path(path)):
+            app.logger.info("Cache Reloading")
+            pages[path] = Page(path)
+    else:
+        app.logger.info("Cache Miss")
+        pages[path] = Page(path)
+    return pages.get(path)
+
+
 @app.before_first_request
 def start():
     """
     Load Config with secret key, and current theme.
     """
     app.config['SECRET_KEY'] = cfg.get("secret-key", b64encode(os.urandom(24)).decode('utf-8'))
+    app.logger.info("Loaded key: " + app.config['SECRET_KEY'])
     set_theme(cfg.get("theme", "default"))
 
 
