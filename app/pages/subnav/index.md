@@ -1,6 +1,6 @@
-@ HomeSub
+@ Subnav main
 
-**This is an index!**
+**This is an subnav index!**
 
 _soon_
 

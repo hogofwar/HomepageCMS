@@ -1,36 +1,34 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>{{ title }}</title>	
-		<link rel="stylesheet" href="{{ url_for('theme_static', filename='stylesheets/default.css') }}" />
-	</head>
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('theme_static', filename='stylesheets/default.css') }}"/>
+</head>
 <body>
 
 <div id="content">
-	<div class="header">
-	  <h1>{{ header }}</h1>
-	  <p>{{ subtitle }}</p>
-	</div>
-	<div id="navbar">
-		<ul>
-			{% for item in nav %}
-				{% if item.type == 'file' %}
-				<li><a href="{{ item.path }}">{{ item.name }}</a></li>
-				{% elif item.type == 'sub-folder' %}
-					<li><a href="#">{{ item.name }}</a>
-						<ul>
-							{% for sub_item in item.contents %}
-							<li><a href="#">{{ sub_item.name }}</a></li>
-							{% endfor %}
-						</ul>
-					</li>
-				{% endif %}
-			{% endfor %}
-		</ul>
-	</div>
-	<div class="stuff">
-    {{ content }}
-	</div>
+    <div class="header">
+        <h1>{{ header }}</h1>
+        <p>{{ subtitle }}</p>
+    </div>
+    <div id="navbar">
+        <ul>
+            {% for item in nav %}
+                <li><a href="{{ item.path }}">{{ item.name }}</a>
+                {% if item.subs %}
+                    <ul>
+                        {% for sub_item in item.subs %}
+                            <li><a href="{{ sub_item.path }}">{{ sub_item.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {%- endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="stuff">
+        {{ content }}
+    </div>
 </div>
 
 </body>

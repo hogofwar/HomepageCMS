@@ -4,11 +4,14 @@ import re
 from flask_misaka import markdown
 
 
-def parse_path(path):
+def parse_path(path, md=True):
     path = os.path.splitext(path)[0]
     if path == "":
         path = "index"
-    return "pages/" + path + ".md"
+    if md:
+        return "pages/" + path + ".md"
+    else:
+        return "pages/" + path
 
 class Page:
     metadata = re.compile(r'(^@\s*(.*(?:[ \t]{2,}.*)*)\n)', re.MULTILINE)
@@ -47,6 +50,7 @@ class Page:
             self.time = os.path.getmtime(path)
             file.close()
             return contents
+        self.title = "404"
         return "##404##"
 
 
