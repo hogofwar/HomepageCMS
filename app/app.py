@@ -57,7 +57,7 @@ def gen_navbar_dictionary(path, nest_level):
             if page.time is None:
                 continue
             app.logger.info("Got: " + page.title)
-            page_dict = {'name': page.title, 'path': '/' + page.name}
+            page_dict = gen_navbar_dictionary(current_page, 0)
             if os.path.isdir("pages/" + current_page) and os.listdir("pages/" + current_page) != []:
                 subs = []
                 app.logger.info("Got Subdirectory " + current_page)
@@ -69,7 +69,6 @@ def gen_navbar_dictionary(path, nest_level):
         return nav_dictionary
     else:
         page = get_page(path)
-        print("test")
         page_dict = {'name': page.title, 'path': '/' + page.name}
         return page_dict
 
@@ -85,21 +84,6 @@ def theme_static(filename):
 @app.route('/favicon.ico')
 def favicon():
     return theme_static("favicon.ico")
-
-
-# Relic of theme switching.
-# @app.route("/admin", methods=('GET', 'POST'))
-# def admin():
-#     form = SelectTheme()
-#     if form.validate_on_submit():
-#         cfg.set("theme", form.theme.data, True)
-#         set_theme(form.theme.data)
-#         app.logger.info("Set theme")
-#     return render_template("admin.html",
-#                            title='Admin',
-#                            form=form)
-
-# add metadata parsing for Title, author and date. All optional
 
 
 def get_page(path):

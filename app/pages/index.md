@@ -1,7 +1,16 @@
 @ Home
 
-**This is an index!**
+Welcome to this thing
+##This file is written in just markdown
+**This is the homepage, the actual file being index.md**
+> This is a quote
 
-_soon_
+##the source for this page:
 
-~~maybe~~
+~~~~
+Welcome to this thing
+##This file is written in just markdown
+**This is the homepage, the actual file being index.md**
+# it supports all markdown features
+> this is a quote
+~~~~

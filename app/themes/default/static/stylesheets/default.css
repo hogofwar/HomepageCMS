@@ -68,6 +68,28 @@ html, body {
 	letter-spacing: -3px;
 }
 
+#content blockquote {
+	background: #17191A;
+	color: #fff;
+	border-left: 10px solid #111;
+	margin: 1.5em 10px;
+	padding: 0.5em 10px;
+	quotes: "\201C""\201D""\2018""\2019";
+}
+
+#content blockquote:before {
+	color: #fff;
+	content: open-quote;
+	font-size: 4em;
+	line-height: 0.1em;
+	margin-right: 0.25em;
+	vertical-align: -0.4em;
+}
+
+#content blockquote p {
+	display: inline;
+}
+
 #navbar {
 	background-color: #141414; 
 }
@@ -148,40 +170,12 @@ html, body {
 	color: #a0a0a0;
 }
 
-#content ul.nav {
-	padding: 20px;
-	background-color: #141414;
-	margin: 0 auto;
-}
-
-#content ul.nav li {
-	display: inline;
-	text-decoration: none;
-}	
-
-#content ul.nav li>a {
-	color: #e1e1e1;
-	padding: 5px;
-	text-align: center;
-	background-color: #111111;
-	border: 3px solid #333;
-	text-decoration: none;
-}
-
-#content ul.nav li>a:visited {
-	color: #e1e1e1;
-	padding: 5px;
-	background-color: #111111;
-	border: 3px solid #333;
-	text-decoration: none;
-}
-
-#content ul.nav li>a:hover {
-	background-color: #141414;
+#content pre{
+	margin: 0 20px 0 20px; 
 }
 
 #content p {
-	padding: 0 10px 10px 10px;
+	padding: 5px 10px 5px 10px;
 	margin: 0;
 }
 
@@ -192,13 +186,17 @@ html, body {
 }
 
 #content h2 {
-	padding: 4px;
+	padding: 2px;
 	background-color: #17191A;
 	border: 4px solid #111;
 	color: #707070;
 	font-size: 21px;
 	text-align: center;
-	margin: 5px 5px 10px 10px;
+	margin: 10px 5px 10px 10px;
+}
+
+#content h1 {
+	margin: 5px 10px 5px 10px;
 }
 
 #content .stuff {
