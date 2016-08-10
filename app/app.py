@@ -22,12 +22,13 @@ site_info.subtitle = cfg.get("subtitle", "Subtitle Holder")
 pages = {}
 nav_items = []
 
-
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def page(path):
     app.logger.info("Getting page: " + path)
     page_file = get_page(path)
+
+    nav_items = gen_navbar_dictionary("pages", 0)
 
     if page_file is not None:
         app.logger.info("Parsing page")
@@ -42,6 +43,35 @@ def page(path):
         app.logger.info("Page not found")
         # technically can't happen since Page is returned, containing 404
         return "404"
+
+
+def gen_navbar_dictionary(path, nest_level):
+    # Loops through all files in /pages then creates a dictonary with
+    # information on each file to use in the navbar. Recursion is used to loop
+    # through subdirectories inside /pages
+    if os.path.isdir(path):
+        nav_dictionary = []
+        for current_page in os.listdir(path):
+            current_page = os.path.splitext(current_page)[0]
+            page = get_page(current_page)
+            if page.time is None:
+                continue
+            app.logger.info("Got: " + page.title)
+            page_dict = {'name': page.title, 'path': '/' + page.name}
+            if os.path.isdir("pages/" + current_page) and os.listdir("pages/" + current_page) != []:
+                subs = []
+                app.logger.info("Got Subdirectory " + current_page)
+                for sub_page in os.listdir("pages/" + current_page):
+                    subs.append(gen_navbar_dictionary('subnav/' + sub_page, 1))
+                page_dict["subs"] = subs
+            nav_dictionary.append(page_dict)
+            app.logger.info(nav_dictionary)
+        return nav_dictionary
+    else:
+        page = get_page(path)
+        print("test")
+        page_dict = {'name': page.title, 'path': '/' + page.name}
+        return page_dict
 
 
 @app.route('/static/<path:filename>')
@@ -72,28 +102,6 @@ def favicon():
 # add metadata parsing for Title, author and date. All optional
 
 
-def gen_navbar():
-    # Nav should be generated once, perhaps updated whenever files are detected as updated
-    for current_page in os.listdir("pages"):
-        current_page = os.path.splitext(current_page)[0]
-        page = get_page(current_page)
-        if page.time is None:
-            continue
-        app.logger.info("Got: " + page.title)
-        page_dict = {'name': page.title, 'path': '/' + page.name}
-        if os.path.isdir("pages/" + current_page) and os.listdir("pages/" + current_page) != []:
-            subs = []
-            for sub_page in os.listdir("pages/" + current_page):
-                app.logger.info("this:" + os.path.splitext(sub_page)[0])
-                if os.path.splitext(sub_page)[1] == ".md" and os.path.splitext(sub_page)[0] != "index":
-                    app.logger.info("Adding to submenu: " + os.path.splitext(sub_page)[0])
-                    subs.append(
-                        {'name': get_page(current_page + "/" + sub_page).title, 'path': current_page + '/' + sub_page})
-            page_dict["subs"] = subs
-        nav_items.append(page_dict)
-        app.logger.info(nav_items)
-
-
 def get_page(path):
     app.logger.info("Getting: " + path)
     if os.path.isdir(parse_path(path, False)):
@@ -117,7 +125,6 @@ def start():
     app.config['SECRET_KEY'] = cfg.get("secret-key", b64encode(os.urandom(24)).decode('utf-8'))
     app.logger.info("Loaded key: " + app.config['SECRET_KEY'])
     set_theme(cfg.get("theme", "default"))
-    gen_navbar()
 
 
 def list_themes():
